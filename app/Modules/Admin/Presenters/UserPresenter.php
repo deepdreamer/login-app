@@ -35,8 +35,9 @@ final class UserPresenter extends Presenter
     {
         $loggedInId = (int) $this->getUser()->getId();
         $isAdmin = $this->getUser()->isInRole('admin');
+        $editingOwnProfile = $loggedInId === $id;
 
-        if (!$isAdmin && $loggedInId !== $id) {
+        if (!$isAdmin && !$editingOwnProfile) {
             $this->error('Přístup odepřen.', 403);
         }
 
@@ -121,6 +122,10 @@ final class UserPresenter extends Presenter
     protected function createComponentEditForm(): Form
     {
         $isAdmin = $this->getUser()->isInRole('admin');
+        $idParam = $this->getParameter('id');
+        $id = is_numeric($idParam) ? (int) $idParam : 0;
+        $editingOwnProfile = (int) $this->getUser()->getId() === $id;
+
         $form = new Form();
 
         $form->addText('name', 'Jméno:')
@@ -138,9 +143,23 @@ final class UserPresenter extends Presenter
         $form->addEmail('email_address', 'E-mail:')
             ->setRequired('Zadejte e-mailovou adresu.');
 
-        $form->addPassword('password', 'Nové heslo:')
+        $form->addPassword('new_password', 'Nové heslo:')
             ->addCondition(Form::Filled)
-            ->addRule(Form::MinLength, 'Heslo musí mít alespoň %d znaků.', 8);
+            ->addRule(Form::MinLength, 'Heslo musí mít alespoň %d znaků.', 8)
+            ->addRule(Form::Pattern, 'Heslo musí obsahovat alespoň jedno číslo.', '.*[0-9].*');
+
+        $form->addPassword('new_password_confirm', 'Nové heslo znovu:')
+            ->addConditionOn($form['new_password'], Form::Filled)
+            ->setRequired('Zadejte nové heslo znovu.')
+            ->addRule(Form::Equal, 'Hesla se neshodují.', $form['new_password']);
+
+        if ($editingOwnProfile) {
+            $form->addPassword('current_password', 'Aktuální heslo:')
+                ->addConditionOn($form['new_password'], Form::Filled)
+                ->setRequired('Pro změnu hesla musíte zadat to stávající.');;
+        }
+
+
 
         if ($isAdmin) {
             $form->addSelect('role', 'Role:', ['user' => 'Uživatel', 'admin' => 'Administrátor'])
@@ -154,11 +173,12 @@ final class UserPresenter extends Presenter
         return $form;
     }
 
-    /** @param object{name: string, surname: string, login_name: string, phone_number: string, email_address: string, password: string, role?: string} $data */
+    /** @param object{name: string, surname: string, login_name: string, phone_number: string, email_address: string, current_password?: string, new_password: string, new_password_confirm: string, role?: string} $data */
     private function editFormSucceeded(Form $form, $data): void
     {
         $idParam = $this->getParameter('id');
         $id = is_numeric($idParam) ? (int) $idParam : 0;
+        $editingOwnProfile = (int) $this->getUser()->getId() === $id;
 
         /** @var array<string, mixed> $values */
         $values = [
@@ -169,8 +189,15 @@ final class UserPresenter extends Presenter
             'email_address' => $data->email_address,
         ];
 
-        if ($data->password !== '') {
-            $values['password'] = $this->userFacade->hashPassword($data->password);
+        if ($data->new_password !== '') {
+            if ($editingOwnProfile) {
+                $currentPassword = $data->current_password ?? '';
+                if (!$this->userFacade->verifyPassword($id, $currentPassword)) {
+                    $form['current_password']->addError('Aktuální heslo není správné.');
+                    return;
+                }
+            }
+            $values['password'] = $this->userFacade->hashPassword($data->new_password);
         }
 
         if ($this->getUser()->isInRole('admin') && isset($data->role)) {
@@ -207,7 +234,8 @@ final class UserPresenter extends Presenter
 
         $form->addPassword('password', 'Heslo:')
             ->setRequired('Zadejte heslo.')
-            ->addRule(Form::MinLength, 'Heslo musí mít alespoň %d znaků.', 8);
+            ->addRule(Form::MinLength, 'Heslo musí mít alespoň %d znaků.', 8)
+            ->addRule(Form::Pattern, 'Heslo musí obsahovat alespoň jedno číslo.', '.*[0-9].*');
 
         $form->addSelect('role', 'Role:', ['user' => 'Uživatel', 'admin' => 'Administrátor'])
             ->setRequired('Vyberte roli.');

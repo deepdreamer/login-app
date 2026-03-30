@@ -89,6 +89,17 @@ final class UserFacade implements Authenticator
         return $this->passwords->hash($password);
     }
 
+    public function verifyPassword(int $id, string $password): bool
+    {
+        $row = $this->database->table('users')->get($id);
+        if (!$row instanceof ActiveRow) {
+            return false;
+        }
+        $hash = $row->password;
+        assert(is_string($hash));
+        return $this->passwords->verify($password, $hash);
+    }
+
     /** @param array<string, mixed> $data */
     public function update(int $id, array $data): void
     {

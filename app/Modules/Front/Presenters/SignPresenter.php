@@ -87,7 +87,8 @@ final class SignPresenter extends Presenter
 
         $form->addPassword('password', 'Heslo:')
             ->setRequired('Zadejte heslo.')
-            ->addRule(Form::MinLength, 'Heslo musí mít alespoň %d znaků.', 8);
+            ->addRule(Form::MinLength, 'Heslo musí mít alespoň %d znaků.', 8)
+            ->addRule(Form::Pattern, 'Heslo musí obsahovat alespoň jedno číslo.', '.*[0-9].*');
 
         $form->addPassword('password_confirm', 'Heslo znovu:')
             ->setRequired('Zadejte heslo znovu.')
