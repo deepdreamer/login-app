@@ -24,6 +24,13 @@ docker compose exec -T mysql mysql -uroot -prootsecret < database/setup.sql
 
 Vsichni testovaci uzivatele maji heslo `secret123`.
 
+Hesla jsou hashovana algoritmem **Argon2id** pres `Nette\Security\Passwords`. Konfigurace je v `config/common.neon` (`security.passwords: Nette\Security\Passwords(::PASSWORD_ARGON2ID)`).
+
+Regenerace autoloaderu (nutne po pridani/odstraneni PHP souboru):
+```bash
+docker compose exec app composer dump-autoload
+```
+
 Vstup do MySQL konzole:
 ```bash
 docker compose exec mysql mysql -uroot -prootsecret

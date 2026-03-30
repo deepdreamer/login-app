@@ -1,13 +1,15 @@
 parameters:
 
 application:
-	errorPresenter: Error
-	mapping:
-		*: App\Presenters\*Presenter
+    errorPresenter: Error
+    mapping:
+        Front: App\Modules\Front\Presenters\*Presenter
+        Admin: App\Modules\Admin\Presenters\*Presenter
 
 session:
-	expiration: 14 days
+    expiration: 14 days
 
 services:
-	- App\Router\RouterFactory::createRouter
-	- App\Model\UserFacade
+    - App\Router\RouterFactory::createRouter
+    - App\Model\UserFacade
+    security.passwords: Nette\Security\Passwords(::PASSWORD_ARGON2ID)
