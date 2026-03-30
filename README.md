@@ -1,0 +1,1 @@
+Ukol pro vytvoreni prihlasovaci/registracni aplikace.
