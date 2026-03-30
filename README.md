@@ -2,6 +2,11 @@ Ukol pro vytvoreni prihlasovaci/registracni aplikace.
 
 ## Zpusteni aplikace podrobne
 
+Vytvoreni konfiguracniho souboru pro prostredi:
+```bash
+cp .env.example .env
+```
+
 Sestaveni kontejneru a zpusteni kontejneru:
 ```bash
 docker compose up --build -d
@@ -18,3 +23,8 @@ docker compose exec -T mysql mysql -uroot -prootsecret < database/setup.sql
 ```
 
 Vsichni testovaci uzivatele maji heslo `secret123`.
+
+Vstup do MySQL konzole:
+```bash
+docker compose exec mysql mysql -uroot -prootsecret
+```

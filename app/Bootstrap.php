@@ -22,6 +22,10 @@ class Bootstrap
             ->addDirectory(__DIR__)
             ->register();
 
+        $configurator->addDynamicParameters([
+            'env' => getenv(),
+        ]);
+
         $configurator->addConfig($appDir . '/config/common.neon');
         $configurator->addConfig($appDir . '/config/local.neon');
 

@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `login_app` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS `login_app`;
+CREATE DATABASE `login_app` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE `login_app`;
 
@@ -10,6 +11,7 @@ CREATE TABLE `users` (
     `phone_number`  VARCHAR(20)     NOT NULL,
     `email_address` VARCHAR(255)    NOT NULL,
     `password`      VARCHAR(255)    NOT NULL,
+    `role`          ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     `created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uq_login_name` (`login_name`),
@@ -29,7 +31,7 @@ CREATE TABLE `login_attempts` (
 
 -- Fixtures
 -- Passwords are Argon2id hashes of 'secret123'
-INSERT INTO `users` (`name`, `surname`, `login_name`, `phone_number`, `email_address`, `password`) VALUES
-    ('John',  'Smith',   'jsmith',   '+44 7700 900123',   'john.smith@example.com',   '$argon2id$v=19$m=65536,t=4,p=1$YUtxZUVKWnM0OE9CbkVjVw$XCKZswjrpUVnxvXZkw7BS8JmgMHX0mYKBSxvZUkfKPk'),
-    ('Marie', 'Dupont',  'mdupont',  '+33 6 12 34 56 78', 'marie.dupont@example.com', '$argon2id$v=19$m=65536,t=4,p=1$YUtxZUVKWnM0OE9CbkVjVw$XCKZswjrpUVnxvXZkw7BS8JmgMHX0mYKBSxvZUkfKPk'),
-    ('Karel', 'Novak',   'knovak',   '+420 601 234 567',  'karel.novak@example.com',  '$argon2id$v=19$m=65536,t=4,p=1$YUtxZUVKWnM0OE9CbkVjVw$XCKZswjrpUVnxvXZkw7BS8JmgMHX0mYKBSxvZUkfKPk');
+INSERT INTO `users` (`name`, `surname`, `login_name`, `phone_number`, `email_address`, `password`, `role`) VALUES
+    ('John',  'Smith',   'jsmith',   '+44 7700 900123',   'john.smith@example.com',   '$argon2id$v=19$m=65536,t=4,p=1$YUtxZUVKWnM0OE9CbkVjVw$XCKZswjrpUVnxvXZkw7BS8JmgMHX0mYKBSxvZUkfKPk', 'admin'),
+    ('Marie', 'Dupont',  'mdupont',  '+33 6 12 34 56 78', 'marie.dupont@example.com', '$argon2id$v=19$m=65536,t=4,p=1$YUtxZUVKWnM0OE9CbkVjVw$XCKZswjrpUVnxvXZkw7BS8JmgMHX0mYKBSxvZUkfKPk', 'user'),
+    ('Karel', 'Novak',   'knovak',   '+420 601 234 567',  'karel.novak@example.com',  '$argon2id$v=19$m=65536,t=4,p=1$YUtxZUVKWnM0OE9CbkVjVw$XCKZswjrpUVnxvXZkw7BS8JmgMHX0mYKBSxvZUkfKPk', 'user');

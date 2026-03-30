@@ -14,7 +14,8 @@
         "nette/http": "^3.3",
         "nette/security": "^3.2",
         "nette/utils": "^4.0",
-        "tracy/tracy": "^2.10"
+        "tracy/tracy": "^2.10",
+        "ublaboo/datagrid": "^7.1"
     },
     "require-dev": {
         "nette/tester": "^2.5",
