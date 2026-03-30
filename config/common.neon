@@ -1,0 +1,13 @@
+parameters:
+
+application:
+	errorPresenter: Error
+	mapping:
+		*: App\Presenters\*Presenter
+
+session:
+	expiration: 14 days
+
+services:
+	- App\Router\RouterFactory::createRouter
+	- App\Model\UserFacade

@@ -87,6 +87,14 @@ phpunit
 vendor/
 
 #-------------------------
+# Nette Runtime Directories
+#-------------------------
+log/*
+!log/.gitignore
+temp/*
+!temp/.gitignore
+
+#-------------------------
 # IDE / Development Files
 #-------------------------
 

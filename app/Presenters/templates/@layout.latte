@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{ifset title}{include title} | {/ifset}Login App</title>
+</head>
+<body>
+	<nav>
+		{if $user->isLoggedIn()}
+			Logged in as <strong>{$user->getIdentity()->getData()['username']}</strong>
+			| <a n:href="Sign:out">Sign out</a>
+		{else}
+			<a n:href="Sign:in">Sign in</a>
+		{/if}
+	</nav>
+
+	<main>
+		{include content}
+	</main>
+</body>
+</html>

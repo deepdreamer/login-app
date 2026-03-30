@@ -1,0 +1,8 @@
+parameters:
+
+database:
+	dsn: 'mysql:host=%env.DB_HOST%:%env.DB_PORT%;dbname=%env.DB_NAME%'
+	user: %env.DB_USER%
+	password: %env.DB_PASSWORD%
+	options:
+		lazy: true
