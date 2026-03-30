@@ -21,17 +21,22 @@ final class UserFacade implements Authenticator
     ) {
     }
 
-    public function authenticate(string $user, string $password): IIdentity
+    public function getByLoginName(string $loginName): ?ActiveRow
     {
-        $row = $this->database->table('users')
-            ->where('login_name', $user)
+        return $this->database->table('users')
+            ->where('login_name', $loginName)
             ->fetch();
+    }
 
-        if (!$row) {
+    public function authenticate(string $username, string $password): IIdentity
+    {
+        $userRow = $this->getByLoginName($username);
+
+        if (!$userRow) {
             throw new AuthenticationException('User not found.', self::IdentityNotFound);
         }
 
-        $hash = $row->password;
+        $hash = $userRow->password;
         assert(is_string($hash));
 
         if (!$this->passwords->verify($password, $hash)) {
@@ -39,16 +44,16 @@ final class UserFacade implements Authenticator
         }
 
         if ($this->passwords->needsRehash($hash)) {
-            $row->update(['password' => $this->passwords->hash($password)]);
+            $userRow->update(['password' => $this->passwords->hash($password)]);
         }
 
-        $role = $row->role;
+        $role = $userRow->role;
         assert(is_string($role));
 
-        return new SimpleIdentity($row->id, $role, [
-            'login_name' => $row->login_name,
-            'name' => $row->name,
-            'surname' => $row->surname,
+        return new SimpleIdentity($userRow->id, $role, [
+            'login_name' => $userRow->login_name,
+            'name' => $userRow->name,
+            'surname' => $userRow->surname,
         ]);
     }
 

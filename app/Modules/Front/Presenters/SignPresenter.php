@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Modules\Front\Presenters;
 
+use App\Model\SubmitAttempts;
 use App\Model\UserFacade;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Presenter;
+use Nette\Database\Table\ActiveRow;
 use Nette\Database\UniqueConstraintViolationException;
+use Nette\Http\IRequest;
 use Nette\Security\AuthenticationException;
 
 final class SignPresenter extends Presenter
 {
     public function __construct(
         private readonly UserFacade $userFacade,
+        private readonly SubmitAttempts $submitAttempts,
     ) {
         parent::__construct();
     }
@@ -50,9 +54,27 @@ final class SignPresenter extends Presenter
 
         $form->addSubmit('send', 'Přihlásit se');
 
+        $form->onSubmit[] = $this->logAttempt(...);
+
         $form->onSuccess[] = $this->signInFormSucceeded(...);
 
         return $form;
+    }
+
+    private function logAttempt(Form $form): void
+    {
+        $data = $form->getHttpData();
+        $loginName = $data['login_name'];
+        $user = $this->userFacade->getByLoginName($loginName);
+
+        $ipAddress = $this->getHttpRequest()->getRemoteAddress() ?? 'undefined';
+        $userAgent = $this->getHttpRequest()->getHeader('user-agent') ?? 'undefined';
+        $this->submitAttempts->saveLoginAttempt(
+            $loginName,
+            $ipAddress,
+            $userAgent,
+            $user,
+        );
     }
 
     /** @param object{login_name: string, password: string} $data */

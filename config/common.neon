@@ -11,5 +11,6 @@ session:
 
 services:
     - App\Router\RouterFactory::createRouter
+    - App\Model\SubmitAttempts
     - App\Model\UserFacade
     security.passwords: Nette\Security\Passwords(::PASSWORD_ARGON2ID)
