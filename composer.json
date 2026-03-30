@@ -19,7 +19,8 @@
     "require-dev": {
         "nette/tester": "^2.5",
         "phpstan/phpstan": "^2.0",
-        "phpstan/phpstan-nette": "^2.0"
+        "phpstan/phpstan-nette": "^2.0",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -40,6 +41,9 @@
     "scripts": {
         "post-install-cmd": [
             "@php -r \"chmod('log', 0777); chmod('temp', 0777); chmod('temp/cache', 0777);\""
-        ]
+        ],
+        "phpstan": "phpstan analyse --memory-limit=256M",
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf"
     }
 }

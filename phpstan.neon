@@ -1,0 +1,11 @@
+includes:
+    - vendor/phpstan/phpstan-nette/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - app
+    excludePaths:
+        - temp
+    ignoreErrors:
+        - identifier: property.onlyWritten

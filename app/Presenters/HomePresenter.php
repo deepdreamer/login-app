@@ -8,10 +8,10 @@ use Nette\Application\UI\Presenter;
 
 final class HomePresenter extends Presenter
 {
-	public function actionDefault(): void
-	{
-		if (!$this->getUser()->isLoggedIn()) {
-			$this->redirect('Sign:in');
-		}
-	}
+    public function actionDefault(): void
+    {
+        if (!$this->getUser()->isLoggedIn()) {
+            $this->redirect('Sign:in');
+        }
+    }
 }
